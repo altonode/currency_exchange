@@ -9,6 +9,7 @@ from django.template.defaultfilters import slugify
 
 from currency_exchange.converter.models import Currency
 
+
 class User(AbstractUser):
     """Default user for Currency Exchange Project."""
 
@@ -26,6 +27,7 @@ class User(AbstractUser):
         """
         return reverse("users:detail", kwargs={"username": self.username})
 
+
 class UserProfile(models.Model):
     # Links UserProfile to a User model instance.
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
@@ -34,13 +36,13 @@ class UserProfile(models.Model):
 
     # Additional User attributes to include.
     picture = models.ImageField(upload_to='profile_images', blank=True)
-    currency = models.ForeignKey(Currency)
 
     # user record url unique identifier
     uuid = models.UUIDField(
         db_index=True,
         default=uuid_lib.uuid4,
         editable=False)
+
     # user url slug
     slug = models.SlugField(unique=True, blank=True)
 
