@@ -2,12 +2,11 @@
 
 {% block title %}{{ selecteduser.username }}Profile{% endblock %}
 
-{% block body_block %}
-<h1>{{selecteduser.username}}Profile</h1>
-<img src="{{ MEDIA_URL }}{{ userprofile.picture }}"
+{% block content %}
+<h1>{{selecteduser.username}} Profile</h1>
+<img src="{{ MEDIA_URL }}\profile_images\{{ userprofile.picture }}"
     width="300"
     height="300"
-    alt="{{ selecteduser.username }}" />
+    alt="{{ selecteduser.username }} pic" />
 <br />
-<div id="edit_profile"></div>
-{% endblock %}
+{% endblock content %}

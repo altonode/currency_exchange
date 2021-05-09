@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, RedirectView, UpdateView
 from django.views.generic.edit import FormView
+from django.shortcuts import render, redirect
 
 from currency_exchange.users.forms import UserProfileForm
 from currency_exchange.users.models import UserProfile
@@ -50,7 +51,7 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 user_redirect_view = UserRedirectView.as_view()
 
 
-class RegisterProfileView(FormView):
+class UserProfileView(FormView):
     form_class = UserProfileForm
     template_name = "pages/profile_registration.html"
 
@@ -65,7 +66,8 @@ class RegisterProfileView(FormView):
             return self.form_invalid(form)
 
     def get_success_url(self):
-        self.success_url = "/~profile/{}/".format(User.username)
+        user_profile = UserProfile.objects.get(user=self.request.user)
+        self.success_url = "/users/~profile/{}/".format(user_profile.slug)
         if self.success_url:
             url = self.success_url
         else:
@@ -74,18 +76,18 @@ class RegisterProfileView(FormView):
                 )
         return url
 
-register_profile_view = RegisterProfileView.as_view()
+register_profile_view = UserProfileView.as_view()
 
 @login_required
-def profile(request, username):
+def profile(request, slug):
     try:
-        user = User
-    except User.DoesNotExist:
+        userprofile = UserProfile.objects.get_or_create(slug=slug)[0]
+    except UserProfile.DoesNotExist:
         return redirect('home')
 
-    userprofile = UserProfile.objects.get_or_create(user=user)[0]
     form = UserProfileForm(
-        {'currency': userprofile.currency, 'picture': userprofile.picture})
+        {'picture': userprofile.picture})
+    user = request.user
 
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=userprofile)

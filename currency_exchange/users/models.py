@@ -1,3 +1,5 @@
+import uuid as uuid_lib
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
@@ -31,10 +33,18 @@ class UserProfile(models.Model):
 
     # Additional User attributes to include.
     picture = models.ImageField(upload_to='profile_images', blank=True)
-    slug = models.SlugField(unique=True)
 
+    # user record unique identifier
+    uuid = models.UUIDField(
+        db_index=True,
+        default=uuid_lib.uuid4,
+        editable=False)
+    # web api url slug
+    slug = models.SlugField(unique=True, blank = True)
+
+    # update record
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.user.username)
+        self.slug = slugify(self.uuid)
         super(UserProfile, self).save(*args, **kwargs)
 
     # Return the user's name
