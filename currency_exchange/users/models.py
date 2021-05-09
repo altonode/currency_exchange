@@ -36,6 +36,8 @@ class UserProfile(models.Model):
 
     # Additional User attributes to include.
     picture = models.ImageField(upload_to='profile_images', blank=True)
+    preferred_currency = models.ForeignKey(Currency,
+                                           on_delete=models.CASCADE)
 
     # user record url unique identifier
     uuid = models.UUIDField(
