@@ -1,14 +1,10 @@
-{% extends "base.html" %}
+{% block title %}User Profile Registration{% endblock %}
 
-{% block title_block %}
-    Registration - Step 2
-{% endblock %}
-
-{% block body_block %}
+{% block content %}
     <h1>Registration - Step 2</h2>
     <form method="post" action="." enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="submit" />
     </form>
-{% endblock %}
+{% endblock content %}

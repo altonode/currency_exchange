@@ -25,8 +25,8 @@ user_detail_view = UserDetailView.as_view()
 
 class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
-    model = UserProfile
-    fields = ["user", "picture"]
+    model = User
+    fields = ["username"]
     success_message = _("Information successfully updated")
 
     def get_success_url(self):
@@ -52,8 +52,7 @@ user_redirect_view = UserRedirectView.as_view()
 
 class RegisterProfileView(FormView):
     form_class = UserProfileForm
-    template_name = "users/profile_registration.html"
-    success_url = "/redirect/"
+    template_name = "pages/profile_registration.html"
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -65,15 +64,24 @@ class RegisterProfileView(FormView):
         else:
             return self.form_invalid(form)
 
+    def get_success_url(self):
+        self.success_url = "/~profile/{}/".format(User.username)
+        if self.success_url:
+            url = self.success_url
+        else:
+            raise improperlyConfigured(
+                "No URL to redirect to. Provide a success URL"
+                )
+        return url
 
 register_profile_view = RegisterProfileView.as_view()
 
 @login_required
 def profile(request, username):
     try:
-        user = User.objects.get(username=username)
+        user = User
     except User.DoesNotExist:
-        return redirect('index')
+        return redirect('home')
 
     userprofile = UserProfile.objects.get_or_create(user=user)[0]
     form = UserProfileForm(
