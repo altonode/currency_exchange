@@ -58,14 +58,8 @@
 
             {% if request.user.is_authenticated %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'profile' %}">User Profile</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'wallet' %}">Wallet</a>
-              </li>
-              <li class="nav-item">
                 {# URL provided by django-allauth/account/urls.py #}
-                <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>
+                <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% trans "User Profile" %}</a>
               </li>
               <li class="nav-item">
                 {# URL provided by django-allauth/account/urls.py #}
