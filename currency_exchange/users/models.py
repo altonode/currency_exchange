@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.template.defaultfilters import slugify
 
+from currency_exchange.converter.models import Currency
 
 class User(AbstractUser):
     """Default user for Currency Exchange Project."""
@@ -33,14 +34,15 @@ class UserProfile(models.Model):
 
     # Additional User attributes to include.
     picture = models.ImageField(upload_to='profile_images', blank=True)
+    currency = models.ForeignKey(Currency)
 
-    # user record unique identifier
+    # user record url unique identifier
     uuid = models.UUIDField(
         db_index=True,
         default=uuid_lib.uuid4,
         editable=False)
-    # web api url slug
-    slug = models.SlugField(unique=True, blank = True)
+    # user url slug
+    slug = models.SlugField(unique=True, blank=True)
 
     # update record
     def save(self, *args, **kwargs):

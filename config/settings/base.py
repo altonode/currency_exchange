@@ -59,7 +59,6 @@ DJANGO_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
     "django.forms",
 ]
@@ -73,7 +72,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "currency_exchange.users.apps.UsersConfig",
-    # Your stuff: custom apps go here
+    "currency_exchange.converter.apps.UsersConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -289,5 +288,5 @@ ACCOUNT_ADAPTER = "currency_exchange.users.adapters.AccountAdapter"
 SOCIALACCOUNT_ADAPTER = "currency_exchange.users.adapters.SocialAccountAdapter"
 
 
-# Your stuff...
+#
 # ------------------------------------------------------------------------------
