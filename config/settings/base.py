@@ -251,11 +251,13 @@ LOGGING = {
 LOGGING_CONFIG = None
 logging.config.dictConfig(LOGGING)
 
+# SCRIPTING
+# ------------------------------------------------------------------------------
 # SCRIPT_NAME  django.setup() to set the URL resolver script prefix
 # outside of the request/response cycle to generate correct URLs
 #https://docs.djangoproject.com/en/3.2/ref/settings/#force-script-name
 # ------------------------------------------------------------------------------
-FORCE_SCRIPT_NAME = 'populator'
+FORCE_SCRIPT_NAME = ''
 
 # DEFAULT TABLESPACE to use for models that don’t specify one
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-tablespace
@@ -316,5 +318,5 @@ SOCIALACCOUNT_ADAPTER = "currency_exchange.users.adapters.SocialAccountAdapter"
 
 # ExchangeRate-API KEY
 # ------------------------------------------------------------------------------
-EXCHANGE_RATE_API_KEY = env("EXCHANGE_RATE_API_KEY")
+EXCHANGE_RATE_API_KEY = env("EXCHANGE_RATE_API", default='90104cb2e5fc2e3261afaa55')
 #https://www.exchangerate-api.com/

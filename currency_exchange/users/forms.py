@@ -23,10 +23,7 @@ class UserCreationForm(admin_forms.UserCreationForm):
 
 
 class UserProfileForm(forms.ModelForm):
-
     picture = forms.ImageField(required=False)
-
-
     class Meta:
         model = UserProfile
         exclude = ('user',)

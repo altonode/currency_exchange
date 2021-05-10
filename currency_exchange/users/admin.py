@@ -1,9 +1,12 @@
+from django import forms
 from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
-from currency_exchange.users.forms import UserChangeForm, UserCreationForm
+from currency_exchange.users.models import UserProfile
+
 
 User = get_user_model()
 
@@ -32,3 +35,17 @@ class UserAdmin(auth_admin.UserAdmin):
     )
     list_display = ["username", "name", "is_superuser"]
     search_fields = ["name"]
+
+
+class ProfileForm(forms.ModelForm):
+
+    class Meta:
+        exclude = ['height']
+        model = UserProfile
+
+
+
+@admin.register(UserProfile)
+class ProfileAdmin(admin.ModelAdmin):
+    fields = ['picture', 'preferred_currency']
+    form = ProfileForm
