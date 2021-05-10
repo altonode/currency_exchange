@@ -32,7 +32,7 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
     def get_success_url(self):
         user_profile = UserProfile.objects.get(name=self.request.user)
-        self.success_url = "/users/~profile/{}/".format(user_profile.slug)
+        self.success_url = "/users/~profile/{}/".format(user_profile.name)
         if self.success_url:
             url = self.success_url
         else:
