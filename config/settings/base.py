@@ -6,6 +6,7 @@ import logging.config
 import environ
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
+BASE_DIR = ROOT_DIR
 # currency_exchange/
 APPS_DIR = ROOT_DIR / "currency_exchange"
 env = environ.Env()

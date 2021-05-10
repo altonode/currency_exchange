@@ -3,20 +3,10 @@ import requests
 from requests.exceptions import HTTPError
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE',
-                      'config.settings.local')
-
-import django
-from django.conf import settings
-from config.settings import local
-
-settings.configure(default_settings=local, DEBUG=True)
-django.setup()
-
 from currency_exchange.converter.models import Currency
 
 
-def populate():
+def run(*args):
     # creates a lists of dictionaries containing the available codes from the API
     # Then creates a list of dictionaries with the received codes
     # This allows us to iterate and add the data to converter app models
@@ -45,9 +35,13 @@ def add_currency(code, name):
     c.currency_code = code
     c.currency_name = name
     c.save()
-    print(c)
     return c
 
+
+code_count = len(Currency.objects.all())
+
+
+print('{} supported codes retrieved'.format(code_count))
 
 
 # Start execution here!

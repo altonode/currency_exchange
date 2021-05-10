@@ -7,8 +7,11 @@ from django.template.defaultfilters import slugify
 
 class Currency(models.Model):
     """Codes supported by ExchangeRate-API endpoint"""
-    currency_code = models.CharField(_("ISO 4217 currency codes"),  max_length=3, default='USD', primary_key=True)
+    currency_code = models.CharField(_("ISO 4217 currency codes"),  max_length=3, primary_key=True)
     currency_name = models.CharField(_("Supported Currencies"), max_length=128)
+
+    class Meta:
+        verbose_name_plural = 'Currencies'
 
     def __str__(self):
         return self.currency_code
