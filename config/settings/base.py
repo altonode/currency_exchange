@@ -72,7 +72,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "currency_exchange.users.apps.UsersConfig",
-    "currency_exchange.converter.apps.UsersConfig",
+    "currency_exchange.converter.apps.ConverterConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -287,6 +287,7 @@ ACCOUNT_ADAPTER = "currency_exchange.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_ADAPTER = "currency_exchange.users.adapters.SocialAccountAdapter"
 
-
-#
+# ExchangeRate-API KEY
 # ------------------------------------------------------------------------------
+EXCHANGE_RATE_API_KEY = env("EXCHANGE_RATE_API_KEY")
+#https://www.exchangerate-api.com/
