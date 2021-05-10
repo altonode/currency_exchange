@@ -11,7 +11,7 @@
     <div class="control-group">
       <div class="controls">
         <button type="submit" class="btn btn-primary">Update Username</button>
-        <a class="btn btn-primary" href="{% url 'users:register_profile' %}" role="button">View Profile</a>
+        <a class="btn btn-primary" href="{% url 'users:profile' request.user.username %}" role="button">View Profile</a>
       </div>
     </div>
   </form>

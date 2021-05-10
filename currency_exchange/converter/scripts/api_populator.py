@@ -2,7 +2,7 @@ import os
 import requests
 from requests.exceptions import HTTPError
 
-
+from config import celery_app
 from currency_exchange.converter.models import Currency
 
 
@@ -48,3 +48,9 @@ print('{} supported codes retrieved'.format(code_count))
 if __name__ == '__main__':
     print("Starting converter app population script...")
     populate()
+
+
+@celery_app.task()
+def get_daiy_api_update():
+    """A Celery task."""
+    return run()
