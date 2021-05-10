@@ -25,6 +25,7 @@ class UserCreationForm(admin_forms.UserCreationForm):
 class UserProfileForm(forms.ModelForm):
 
     picture = forms.ImageField(required=False)
+    preferred_currency = forms.CharField(required=False)
 
 
     class Meta:

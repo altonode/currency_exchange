@@ -1,16 +1,26 @@
 {% extends "base.html" %}
-{% block title %}User Profile Registration{% endblock %}
 {% load crispy_forms_tags %}
 
+{% block title %}{{ selecteduser.username }} - Profile{% endblock %}
+
 {% block content %}
-  <h1>Hi Registration - Step 2</h1>
-  <form class="form-horizontal" method="post" action="{% url 'users:register_profile' %}">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <div class="control-group">
-      <div class="controls">
-        <button type="submit" class="btn btn-primary">Update</button>
-      </div>
-    </div>
-  </form>
+ <img src="{{ MEDIA_URL }}{{ userprofile.picture }}"
+    width="300"
+    height="300"
+    alt="{{ selecteduser.username }}" />
+<div>
+    {% if selecteduser.username == user.username %}
+      <form class="form-horizontal" method="post" action="{% url 'users:update' %}">
+        {% csrf_token %}
+         {{ form|crispy }}
+        <div class="control-group">
+          <div class="controls">
+            <button type="submit" class="btn btn-primary">Update Profile</button>
+            <a class="btn btn-primary" href="{% url 'users:register_profile' %}" role="button">View Profile</a>
+          </div>
+        </div>
+      </form>
+      {% else %}<p><strong>Currency:</strong><a href={{ userprofile.preferred_currency}}>{% endif %}
+</div>
+<!-- End Action buttons -->
 {% endblock %}

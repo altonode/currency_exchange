@@ -31,7 +31,15 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_message = _("Information successfully updated")
 
     def get_success_url(self):
-        return self.request.user.get_absolute_url()  # type: ignore [union-attr]
+        user_profile = UserProfile.objects.get(name=self.request.user)
+        self.success_url = "/users/~profile/{}/".format(user_profile.slug)
+        if self.success_url:
+            url = self.success_url
+        else:
+            raise improperlyConfigured(
+                "No URL to redirect to. Provide a success URL"
+                )
+        return url
 
     def get_object(self):
         return self.request.user
@@ -51,43 +59,16 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 user_redirect_view = UserRedirectView.as_view()
 
 
-class UserProfileView(FormView):
-    form_class = UserProfileForm
-    template_name = "users/profile_registration.html"
-
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            user_profile = form.save(commit=False)
-            user_profile.user = request.user
-            user_profile.save()
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-
-    def get_success_url(self):
-        user_profile = UserProfile.objects.get(user=self.request.user)
-        self.success_url = "/users/~profile/{}/".format(user_profile.slug)
-        if self.success_url:
-            url = self.success_url
-        else:
-            raise improperlyConfigured(
-                "No URL to redirect to. Provide a success URL"
-                )
-        return url
-
-register_profile_view = UserProfileView.as_view()
-
 @login_required
-def profile(request, slug):
+def profile(request, username):
     try:
-        userprofile = UserProfile.objects.get_or_create(slug=slug)[0]
-    except UserProfile.DoesNotExist:
-        return redirect('home')
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return redirect('index')
 
+    userprofile = UserProfile.objects.get_or_create(user=user)[0]
     form = UserProfileForm(
-        {'picture': userprofile.picture})
-    user = request.user
+        {'picture': userprofile.picture, 'preferred_currency': userprofile.preferred_currency})
 
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
@@ -96,5 +77,5 @@ def profile(request, slug):
             return redirect('users:profile', user.username)
         else:
             print(form.errors)
-    return render(request, 'users/profile.html',
+    return render(request, 'users/profile_registration.html',
                   {'userprofile': userprofile, 'selecteduser': user, 'form': form})
