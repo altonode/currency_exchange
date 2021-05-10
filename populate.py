@@ -4,11 +4,14 @@ from requests.exceptions import HTTPError
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE',
-                      'currency_exchange.config.settings.local')
+                      'config.settings.local')
 
 import django
-django.setup()
+from django.conf import settings
+from config.settings import local
 
+settings.configure(default_settings=local, DEBUG=True)
+django.setup()
 
 from currency_exchange.converter.models import Currency
 
@@ -40,7 +43,7 @@ def populate():
 
 
 def add_currency(code, name):
-    c = Currency.objects.get_or_create(type=type)[0]
+    c = Currency.objects.get_or_create(currency_code=code)[0]
     c.currency_code = code
     c.currency_name = name
     c.save()
