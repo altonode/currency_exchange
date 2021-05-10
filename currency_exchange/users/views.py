@@ -53,7 +53,7 @@ user_redirect_view = UserRedirectView.as_view()
 
 class UserProfileView(FormView):
     form_class = UserProfileForm
-    template_name = "pages/profile_registration.html"
+    template_name = "users/profile_registration.html"
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -96,5 +96,5 @@ def profile(request, slug):
             return redirect('users:profile', user.username)
         else:
             print(form.errors)
-    return render(request, 'pages/profile.html',
+    return render(request, 'users/profile.html',
                   {'userprofile': userprofile, 'selecteduser': user, 'form': form})
