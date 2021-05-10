@@ -10,7 +10,7 @@ ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 APPS_DIR = ROOT_DIR / "currency_exchange"
 env = environ.Env()
 
-READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
+READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=True)
 if READ_DOT_ENV_FILE:
     # OS environment variables take precedence over variables from .env
     env.read_env(str(ROOT_DIR / ".env"))
@@ -59,7 +59,6 @@ DJANGO_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
     "django.forms",
 ]
@@ -73,7 +72,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "currency_exchange.users.apps.UsersConfig",
-    # Your stuff: custom apps go here
+    "currency_exchange.converter.apps.ConverterConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -288,6 +287,7 @@ ACCOUNT_ADAPTER = "currency_exchange.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_ADAPTER = "currency_exchange.users.adapters.SocialAccountAdapter"
 
-
-# Your stuff...
+# ExchangeRate-API KEY
 # ------------------------------------------------------------------------------
+EXCHANGE_RATE_API_KEY = env("EXCHANGE_RATE_API_KEY")
+#https://www.exchangerate-api.com/
