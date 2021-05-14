@@ -1,20 +1,23 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 
-{% block title %}{{ user.username }}{% endblock %}
+{% block title %}Currency Converter{% endblock %}
 
 {% block content %}
-  <h1>Hi {{ user.username }}</h1>
+  <h1>Currency Converter</h1>
   <form class="form-horizontal" method="post" action="{% url 'converter:index' %}">
     {% csrf_token %}
     {{ form|crispy }}
     <div class="control-group">
       <div class="controls">
         <button type="submit" class="btn btn-primary">Convert</button>
-        <a class="btn btn-primary" href="{% url 'converter:index' %}" role="button">Convert</a>
       </div>
     </div>
   </form>
 </div>
-<!-- End Action buttons -->
+{% if received_amount %}
+<p>
+  Amount received is {{ received_amount }}
+</p>
+{% endif %}
 {% endblock %}
