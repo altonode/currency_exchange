@@ -16,8 +16,10 @@
   </form>
 </div>
 {% if received_amount %}
-<p>
-  Amount received is {{ received_amount }}
-</p>
+  <center>
+    <h1>
+    {{sent_amount}} {{ sender_symbol }} is equivalent to <b>{{ received_amount }}</b> {{ receiver_symbol }}
+    </h1>
+  </center>
 {% endif %}
 {% endblock %}
