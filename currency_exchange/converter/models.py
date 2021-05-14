@@ -19,7 +19,7 @@ class Currency(models.Model):
 
 class ConversionRate(models.Model):
     """Latest conversion rates from Open Exchange Rates endpoint"""
-    symbol = models.ForeignKey(Currency, on_delete=models.CASCADE)
+    symbol = models.OneToOneField(Currency, on_delete=models.CASCADE)
     rate = models.DecimalField(_("Conversion Rate - USD"), decimal_places=9, max_digits=20)
 
 

@@ -57,8 +57,10 @@ def run(*args):
 
 def add_rate(currency, rate):
     print(f'{currency} conversion rate: {rate}')
-    r = ConversionRate.objects.get_or_create(symbol=currency, rate=rate)[0]
+    r = ConversionRate.objects.get_or_create(symbol=currency)[0]
+    r.rate = rate
     r.save()
+
     return r
 
 

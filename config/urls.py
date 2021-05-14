@@ -4,9 +4,10 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
+from django.views.generic.base import RedirectView
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
+    path("", RedirectView.as_view(url="converter/"), name='home'),
     path(
         "about/", TemplateView.as_view(template_name="pages/profile.html"), name="about"
     ),
