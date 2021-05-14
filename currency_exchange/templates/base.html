@@ -19,7 +19,7 @@
     <!-- Latest compiled and minified Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <!- Third-party CSS libraries go here -->
+    <!-- Your stuff: Third-party CSS libraries go here -->
     <!-- This file stores project-specific CSS -->
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
     {% endblock %}
@@ -57,6 +57,12 @@
             </li>
 
             {% if request.user.is_authenticated %}
+
+
+
+                {# URL provided by django-allauth/account/urls.py #}
+                <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Sign Out" %}</a>
+              </li>
             {% else %}
               <li class="nav-item">
                 {# URL provided by django-allauth/account/urls.py #}

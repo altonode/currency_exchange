@@ -317,7 +317,8 @@ ACCOUNT_ADAPTER = "currency_exchange.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_ADAPTER = "currency_exchange.users.adapters.SocialAccountAdapter"
 
-# ExchangeRate-API KEY
+# OPEN EXCHANGE RATES
 # ------------------------------------------------------------------------------
-EXCHANGE_RATE_API_KEY = env("EXCHANGE_RATE_API", default='90104cb2e5fc2e3261afaa55')
-#https://www.exchangerate-api.com/
+# Exchange rate data and currency conversion
+# http://api.forex/
+OPEN_EXCHANGE_RATES_APP_ID = env("OPEN_EXCHANGE_RATES_ID", default='90104cb2e5fc2e3261afaa55')

@@ -8,7 +8,7 @@ from currency_exchange.users.views import (
     profile,
 )
 
-app_name = "users"
+app_name = "converter"
 urlpatterns = [
     path("~redirect/", view=user_redirect_view, name="redirect"),
     path("~update/", view=user_update_view, name="update"),

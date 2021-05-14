@@ -6,21 +6,26 @@ from django.template.defaultfilters import slugify
 
 
 class Currency(models.Model):
-    """Codes supported by ExchangeRate-API endpoint"""
-    currency_code = models.CharField(_("ISO 4217 currency codes"),  max_length=3, primary_key=True)
-    currency_name = models.CharField(_("Supported Currencies"), max_length=128)
+    """Currency symbols available from the Open Exchange Rates API"""
+    currency_symbol = models.CharField(_("Currency Symbol"),  max_length=4)
+    currency_name = models.CharField(_("Name of Currency"), max_length=128)
 
     class Meta:
-        verbose_name_plural = 'Currencies'
+        verbose_name_plural = 'currencies'
 
     def __str__(self):
-        return self.currency_code
+        return self.currency_symbol
 
 
-class ConversionRates(models.Model):
-    """Latest conversion rates from ExchangeRate-API endpoint"""
-    rate = models.DecimalField(decimal_places=4, max_digits=20)
-    name = models.ForeignKey(Currency, on_delete=models.CASCADE)
+class ConversionRate(models.Model):
+    """Latest conversion rates from Open Exchange Rates endpoint"""
+    symbol = models.ForeignKey(Currency, on_delete=models.CASCADE)
+    rate = models.DecimalField(_("Conversion Rate - USD"), decimal_places=9, max_digits=20)
+
+
+    def __str__(self):
+        return str(self.symbol)
+
 
 
 class Transaction(models.Model):
@@ -78,3 +83,6 @@ class ReceivedMoney(models.Model):
     # Return the transfer details
     def __str__(self):
         return self.transfer_from
+
+
+

@@ -1,56 +1,70 @@
-import os
 import requests
 from requests.exceptions import HTTPError
 
-from config import celery_app
-from currency_exchange.converter.models import Currency
+from django.conf import settings
+
+from currency_exchange.converter.models import Currency, ConversionRate
 
 
 def run(*args):
     # creates a lists of dictionaries containing the available codes from the API
     # Then creates a list of dictionaries with the received codes
     # This allows us to iterate and add the data to converter app models
-    url = 'https://v6.exchangerate-api.com/v6/90104cb2e5fc2e3261afaa55/codes'
+    api_key = settings.OPEN_EXCHANGE_RATES_APP_ID
+
+    symbols_url = 'https://openexchangerates.org/api/currencies.json'
+
+    rates_url = 'https://openexchangerates.org/api/latest.json?app_id={}'.format(api_key)
 
     try:
-        response = requests.get(url)
+        response1 = requests.get(symbols_url)
 
         # A successful response will raise no error
-        response.raise_for_status()
+        response1.raise_for_status()
     except HTTPError as http_err:
         print(f'HTTP error occurred: {http_err}')
     except Exception as err:
         print(f'Other error occurred: {err}')
     else:
-        data = response.json()
-        supported = []
-        for item in data['supported_codes']:
-            supported.append({'code': item[0], 'name': item[1]})
-        for raw_data in supported:
-            current = add_currency(raw_data["code"], raw_data["name"])
+        symbols_response = response1.json()
 
 
-def add_currency(code, name):
-    c = Currency.objects.get_or_create(currency_code=code)[0]
-    c.currency_code = code
-    c.currency_name = name
+    try:
+        response2 = requests.get(rates_url)
+
+        # A successful response will raise no error
+        response2.raise_for_status()
+    except HTTPError as http_err:
+        print(f'HTTP error occurred: {http_err}')
+    except Exception as err:
+        print(f'Other error occurred: {err}')
+    else:
+        rates_response = response2.json()
+
+    for symbol, name in symbols_response.items():
+        c = add_currency(currency_name=name, currency_symbol=symbol)
+
+    currencies = len(Currency.objects.all())
+    print(f'{currencies} world currencies available')
+
+    for symbol, rate in rates_response['rates'].items():
+        c = Currency.objects.get(currency_symbol=symbol)
+        r = add_rate(currency=c, rate=rate)
+
+    rates_count = len(ConversionRate.objects.all())
+    print(f'{rates_count} supported codes available')
+
+
+def add_rate(currency, rate):
+    print(f'{currency} conversion rate: {rate}')
+    r = ConversionRate.objects.get_or_create(symbol=currency, rate=rate)[0]
+    r.save()
+    return r
+
+
+def add_currency(currency_name, currency_symbol):
+    print(f'{currency_symbol} >-< {currency_name}')
+    c = Currency.objects.get_or_create(currency_symbol=currency_symbol)[0]
+    c.currency_name = currency_name
     c.save()
     return c
-
-
-code_count = len(Currency.objects.all())
-
-
-print('{} supported codes retrieved'.format(code_count))
-
-
-# Start execution here!
-if __name__ == '__main__':
-    print("Starting converter app population script...")
-    populate()
-
-
-@celery_app.task()
-def get_daiy_api_update():
-    """A Celery task."""
-    return run()
