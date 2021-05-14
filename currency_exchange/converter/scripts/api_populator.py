@@ -47,6 +47,9 @@ def run(*args):
     currencies = len(Currency.objects.all())
     print(f'{currencies} world currencies available')
 
+    base_currency = rates_response['base']
+    print(f'Base currency is {base_currency}')
+
     for symbol, rate in rates_response['rates'].items():
         c = Currency.objects.get(currency_symbol=symbol)
         r = add_rate(currency=c, rate=rate)

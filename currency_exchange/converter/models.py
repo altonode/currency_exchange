@@ -12,6 +12,7 @@ class Currency(models.Model):
 
     class Meta:
         verbose_name_plural = 'currencies'
+        ordering = ('currency_name',)
 
     def __str__(self):
         return self.currency_symbol
@@ -21,6 +22,10 @@ class ConversionRate(models.Model):
     """Latest conversion rates from Open Exchange Rates endpoint"""
     symbol = models.OneToOneField(Currency, on_delete=models.CASCADE)
     rate = models.DecimalField(_("Conversion Rate - USD"), decimal_places=9, max_digits=20)
+
+
+    class Meta:
+        ordering = ('symbol',)
 
 
     def __str__(self):

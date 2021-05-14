@@ -6,20 +6,12 @@
 {% block content %}
   <h1>Hi {{ user.username }}</h1>
   <form class="form-horizontal" method="post" action="{% url 'converter:index' %}">
-<!--- {% csrf_token %} --->
-<!--- {{ form|crispy }} --->
-    <div class="form-group">
-      <label for="currencySelected">Select Currency</label>
-      <select id="currencySelected" class="form-control">
-        {% for currency in currencies %}
-        <option>{{ currency.currency_name }}</option>
-        {% endfor %}
-      </select>
-    </div>
+    {% csrf_token %}
+    {{ form|crispy }}
     <div class="control-group">
       <div class="controls">
         <button type="submit" class="btn btn-primary">Convert</button>
-        <a class="btn btn-primary" href="{% url 'users:profile' request.user.username %}" role="button">Convert</a>
+        <a class="btn btn-primary" href="{% url 'converter:index' %}" role="button">Convert</a>
       </div>
     </div>
   </form>
