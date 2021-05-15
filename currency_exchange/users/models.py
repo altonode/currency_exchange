@@ -1,5 +1,7 @@
 import uuid as uuid_lib
 
+from PIL import Image
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
@@ -36,7 +38,7 @@ class UserProfile(models.Model):
 
     # Additional User attributes to include.
     picture = models.ImageField(upload_to='profile_images', blank=True)
-    preferred_currency = models.ForeignKey(Currency, null=True,
+    preferred_currency = models.ForeignKey(Currency, blank=True,
                                            on_delete=models.CASCADE)
 
     # user record url unique identifier
@@ -50,7 +52,7 @@ class UserProfile(models.Model):
 
     # update record
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.uuid)
+        self.slug = slugify(self.user.username)
         super(UserProfile, self).save(*args, **kwargs)
 
     # Return the user's name

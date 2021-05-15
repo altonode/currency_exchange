@@ -4,16 +4,19 @@ from django.utils.translation import gettext_lazy as _
 from django import forms
 
 from currency_exchange.users.models import UserProfile
+from currency_exchange.converter.models import Currency
 
 User = get_user_model()
 
 
 class UserChangeForm(admin_forms.UserChangeForm):
+
     class Meta(admin_forms.UserChangeForm.Meta):
         model = User
 
 
 class UserCreationForm(admin_forms.UserCreationForm):
+
     class Meta(admin_forms.UserCreationForm.Meta):
         model = User
 
@@ -23,13 +26,11 @@ class UserCreationForm(admin_forms.UserCreationForm):
 
 
 class UserProfileForm(forms.ModelForm):
+    query_set = Currency.objects.all()
     picture = forms.ImageField(required=False)
-    preferred_currency = forms.CharField(required=False)
+    preferred_currency = forms.ModelChoiceField(queryset=query_set, required=True)
 
     class Meta:
 
         model = UserProfile
-        exclude = ('user',)
-
-
-
+        exclude = ('user',  'uuid', 'slug', )

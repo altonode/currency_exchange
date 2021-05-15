@@ -5,11 +5,13 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, RedirectView, UpdateView
+from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.shortcuts import render, redirect
 
-from currency_exchange.users.forms import UserProfileForm
 from currency_exchange.users.models import UserProfile
+from currency_exchange.users.forms import UserProfileForm
+
 
 User = get_user_model()
 
@@ -31,21 +33,67 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_message = _("Information successfully updated")
 
     def get_success_url(self):
-        user_profile = UserProfile.objects.get(user=self.request.user)
-        self.success_url = "/users/~profile/{}/".format(user_profile.name)
-        if self.success_url:
-            url = self.success_url
-        else:
-            raise improperlyConfigured(
-                "No URL to redirect to. Provide a success URL"
-                )
-        return url
+        return reverse('users:detail',
+                       kwargs={'username': self.request.user.username})
 
     def get_object(self):
         return self.request.user
 
 
 user_update_view = UserUpdateView.as_view()
+
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+
+    model = UserProfile
+    template_name = "pages/profile.html"
+
+    def get_context_data(self, username, **kwargs):
+        try:
+            user = User.objects.get(username=username)
+            userprofile = UserProfile.objects.get_or_create(user=user)
+        except UserProfile.DoesNotExist:
+            userprofile = None
+        kwargs['user'] = user
+        kwargs['userprofile'] = userprofile
+        return kwargs
+
+profile_view = ProfileView.as_view()
+
+
+class ProfileUpdateView(TemplateView, FormView):
+
+    template_name = "users/profile_update.html"
+    model = UserProfile
+    form_class = UserProfileForm
+
+    def get_context_data(self, username, **kwargs):
+        try:
+            user = User.objects.get(username=username)
+            userprofile = UserProfile.objects.get_or_create(user=user)
+        except UserProfile.DoesNotExist:
+            userprofile = None
+        kwargs['userprofile'] = userprofile
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return kwargs
+
+    def form_invalid(self, username, form):
+        return self.render_to_response(self.get_context_data(username, form=form))
+
+    def form_valid(self, username, form):
+        return self.render_search_response(self.get_context_data(username, form=form))
+
+    def post(self, request, *args, **kwargs):
+        userprofile = kwargs['userprofile']
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(userprofile, form)
+        else:
+            return self.form_invalid(userprofile, form)
+
+
+profile_update_view = ProfileUpdateView.as_view()
 
 
 class UserRedirectView(LoginRequiredMixin, RedirectView):
@@ -59,10 +107,38 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 user_redirect_view = UserRedirectView.as_view()
 
 
+class RegisterProfile(FormView):
+    form_class = UserProfileForm
+    template_name = "users/profile_registration.html"
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            user_profile = form.save(commit=False)
+            user_profile.user = request.user
+            user_profile.save()
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def get_success_url(self):
+        username = self.request.user.username
+        self.success_url = "/users/{}/".format(username)
+        if self.success_url:
+            url = self.success_url
+        else:
+            raise improperlyConfigured(
+                "No URL to redirect to. Provide a success URL"
+                )
+        return url
+
+
+register_profile = RegisterProfile.as_view()
+
 @login_required
 def profile(request, username):
     try:
-        user = User.objects.get(username=username)
+        userprofile = UserProfile.objects.get(username=username)
     except User.DoesNotExist:
         return redirect('index')
 
@@ -78,4 +154,4 @@ def profile(request, username):
         else:
             print(form.errors)
     return render(request, 'users/profile_registration.html',
-                  {'userprofile': userprofile, 'selecteduser': user, 'form': form})
+                  {'userprofile': userprofile, 'selecteduser': user, 'form': form,})

@@ -1,25 +1,13 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 
-{% block title %}{{ selecteduser.username }} - Profile{% endblock %}
+{% block title %}Update Profile{% endblock %}
 
 {% block content %}
- <img src="{{ MEDIA_URL }}{{ userprofile.picture }}"
-    width="300"
-    height="300"
-    alt="{{ selecteduser.username }}" />
-<div>
-    {% if selecteduser.username == user.username %}
-      <form class="form-horizontal" method="post" action="{% url 'users:update' %}">
+  <h1>Update Profile Picture and Currency</h2>
+    <form method="post" action="." enctype="multipart/form-data">
         {% csrf_token %}
-         {{ form|crispy }}
-        <div class="control-group">
-          <div class="controls">
-            <button type="submit" class="btn btn-primary">Update Profile</button>
-            <input type="submit" value="Update" />
-          </div>
-        </div>
-      </form>
-</div>
-<!-- End Action buttons -->
+        {{ form.as_p }}
+        <input type="submit" value="submit" />
+    </form>
 {% endblock %}
