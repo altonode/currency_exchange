@@ -32,7 +32,7 @@ class User(AbstractUser):
 
 class UserProfile(models.Model):
     # Links UserProfile to a User model instance.
-    user = models.OneToOneField(settings.AUTH_USER_MODEL,
+    username = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE,
     )
 
@@ -52,9 +52,9 @@ class UserProfile(models.Model):
 
     # update record
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.user.username)
+        self.slug = slugify(self.username.username)
         super(UserProfile, self).save(*args, **kwargs)
 
     # Return the user's name
     def __str__(self):
-        return self.user.username
+        return self.username.username

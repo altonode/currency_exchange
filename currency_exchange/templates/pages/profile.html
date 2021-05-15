@@ -1,25 +1,33 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 
-{% block title %}{{ selecteduser.username }} Profile{% endblock %}
+{% block title %}{{ user.username }} Profile{% endblock %}
 
 {% block content %}
-<h1>{{selecteduser.username}} Profile</h1>
-<img src="{{ MEDIA_URL }}{{ userprofile.picture }}"
-    width="300"
-    height="300"
-    alt="{{ selecteduser.username }}" />
+<h1>{{user.username}} Profile</h1>
 <br />
+<br />
+<h2>Profile Picture: </h2>
+<img src="{{ MEDIA_URL }}{{ userprofile.picture }}" width="512"
+    height="512" alt="Responsive image" class="img-thumbnail"/>
+<br />
+<br />
+<p><strong>Preferred Currency:</strong>{{ userprofile.preferred_currency }}</p>
 <div>
-    {% if selecteduser.username == user.username %}
-        <form method="post" action="." enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" value="Update" />
-        </form>
-    {% else %}
-    <p><strong>Preferred Currency:</strong>{{ userprofile.preferred_currency }}</p>
+    {% if user.username == request.user.username %}
+      <br/>
+      <h3> Edit Profile: </h3>
+      <br/>
+      <form class="form-horizontal" method="post" action=".">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="control-group">
+          <div class="controls">
+            <button type="submit" class="btn btn-primary">Update Profile</button>
+            <a class="btn btn-primary" href="{% url 'users:update_profile' request.user.username %}" role="button">View Profile</a>
+          </div>
+        </div>
+       </form>
     {% endif %}
 </div>
-<div id="edit_profile"></div>
 {% endblock content %}

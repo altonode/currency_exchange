@@ -33,4 +33,4 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
 
         model = UserProfile
-        exclude = ('user',  'uuid', 'slug', )
+        exclude = ('username',  'uuid', 'slug', )

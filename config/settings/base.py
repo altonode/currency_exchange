@@ -316,6 +316,8 @@ ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_ADAPTER = "currency_exchange.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_ADAPTER = "currency_exchange.users.adapters.SocialAccountAdapter"
+# https://django-allauth.readthedocs.io/en/latest/configuration.html
+ACCOUNT_SIGNUP_REDIRECT_URL = "users:register_profile"
 
 # OPEN EXCHANGE RATES
 # ------------------------------------------------------------------------------

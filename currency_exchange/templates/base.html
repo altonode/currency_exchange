@@ -57,7 +57,7 @@
                 <a class="nav-link" href="{% url 'account_logout' %}">Wallet</a>
               </li>
               <li>
-                <a class="nav-link" href="{% url 'users:profile' request.user.username %}">Profile</a>
+                <a class="nav-link" href="{% url 'users:profile' request.user %}">Profile</a>
               </li>
               <li>
                 {# URL provided by django-allauth/account/urls.py #}

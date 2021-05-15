@@ -42,55 +42,40 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
 user_update_view = UserUpdateView.as_view()
 
+@login_required
+def profile(request, username):
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return redirect('index')
 
-class ProfileView(LoginRequiredMixin, TemplateView):
+    userprofile = UserProfile.objects.get_or_create(user=user)[0]
+    form = UserProfileForm(
+        {'picture': userprofile.picture, 'preferred_currency': userprofile.preferred_currency})
 
-    model = UserProfile
-    template_name = "pages/profile.html"
-
-    def get_context_data(self, username, **kwargs):
-        try:
-            user = User.objects.get(username=username)
-            userprofile = UserProfile.objects.get_or_create(user=user)
-        except UserProfile.DoesNotExist:
-            userprofile = None
-        kwargs['user'] = user
-        kwargs['userprofile'] = userprofile
-        return kwargs
-
-profile_view = ProfileView.as_view()
-
-
-class ProfileUpdateView(TemplateView, FormView):
-
-    template_name = "users/profile_update.html"
-    model = UserProfile
-    form_class = UserProfileForm
-
-    def get_context_data(self, username, **kwargs):
-        try:
-            user = User.objects.get(username=username)
-            userprofile = UserProfile.objects.get_or_create(user=user)
-        except UserProfile.DoesNotExist:
-            userprofile = None
-        kwargs['userprofile'] = userprofile
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        return kwargs
-
-    def form_invalid(self, username, form):
-        return self.render_to_response(self.get_context_data(username, form=form))
-
-    def form_valid(self, username, form):
-        return self.render_search_response(self.get_context_data(username, form=form))
-
-    def post(self, request, *args, **kwargs):
-        userprofile = kwargs['userprofile']
-        form = self.get_form()
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
         if form.is_valid():
-            return self.form_valid(userprofile, form)
+            form.save(commit=True)
+            return redirect('users:profile', user.username)
         else:
-            return self.form_invalid(userprofile, form)
+            print(form.errors)
+    return render(request, 'pages/profile.html',
+                  {'userprofile': userprofile, user: 'user', 'username': username, 'form': form})
+
+
+class ProfileUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+
+    model = UserProfile
+    fields = ["picture", "preferred_currency"]
+    success_message = _("Information successfully updated")
+
+    def get_success_url(self):
+        return reverse('users:profile',
+                       kwargs={'username': self.request.user.username})
+
+    def get_object(self):
+        return self.request.user
 
 
 profile_update_view = ProfileUpdateView.as_view()
@@ -138,13 +123,14 @@ register_profile = RegisterProfile.as_view()
 @login_required
 def profile(request, username):
     try:
-        userprofile = UserProfile.objects.get(username=username)
+        user = User.objects.get(username=username)
     except User.DoesNotExist:
         return redirect('index')
 
-    userprofile = UserProfile.objects.get_or_create(user=user)[0]
+    userprofile = UserProfile.objects.get_or_create(username=user)[0]
     form = UserProfileForm(
-        {'picture': userprofile.picture, 'preferred_currency': userprofile.preferred_currency})
+        {'username': userprofile.username, 'picture': userprofile.picture,
+         'preferred_currency': userprofile.preferred_currency})
 
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
@@ -153,5 +139,5 @@ def profile(request, username):
             return redirect('users:profile', user.username)
         else:
             print(form.errors)
-    return render(request, 'users/profile_registration.html',
-                  {'userprofile': userprofile, 'selecteduser': user, 'form': form,})
+    return render(request, 'pages/profile.html',
+                  {'userprofile': userprofile, 'user': user, 'form': form,})
