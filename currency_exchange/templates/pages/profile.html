@@ -18,13 +18,12 @@
       <br/>
       <h3> Edit Profile: </h3>
       <br/>
-      <form class="form-horizontal" method="post" action=".">
+      <form class="form-horizontal" method="post" action="." enctype="multipart/form-data">
         {% csrf_token %}
         {{ form|crispy }}
         <div class="control-group">
           <div class="controls">
             <button type="submit" class="btn btn-primary">Update Profile</button>
-            <a class="btn btn-primary" href="{% url 'users:update_profile' request.user.username %}" role="button">View Profile</a>
           </div>
         </div>
        </form>

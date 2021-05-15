@@ -120,6 +120,7 @@ class RegisterProfile(FormView):
 
 register_profile = RegisterProfile.as_view()
 
+
 @login_required
 def profile(request, username):
     try:

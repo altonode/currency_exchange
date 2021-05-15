@@ -47,5 +47,5 @@ class ProfileForm(forms.ModelForm):
 
 @admin.register(UserProfile)
 class ProfileAdmin(admin.ModelAdmin):
-    fields = ['user', 'picture', 'preferred_currency', 'slug']
+    fields = ['username', 'picture', 'preferred_currency', 'slug']
     form = ProfileForm
