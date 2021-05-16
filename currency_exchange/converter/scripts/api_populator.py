@@ -55,12 +55,12 @@ def run(*args):
         r = add_rate(currency=c, rate=rate)
 
     rates_count = len(ConversionRate.objects.all())
-    print(f'{rates_count} supported codes available')
+    print(f'{rates_count} exchange rates available')
 
 
 def add_rate(currency, rate):
     print(f'{currency} conversion rate: {rate}')
-    r = ConversionRate.objects.get_or_create(symbol=currency)[0]
+    r = ConversionRate.objects.get_or_create(currency=currency)[0]
     r.rate = rate
     r.save()
 

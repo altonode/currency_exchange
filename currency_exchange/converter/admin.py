@@ -17,7 +17,7 @@ class CurrencyForm(admin.ModelAdmin):
     list_display = ["currency_symbol", "currency_name",]
     search_fields = ["currency_symbol"]
 
-class CurrencyForm(forms.ModelForm):
+class ConversionForm(forms.ModelForm):
 
     class Meta:
         model = ConversionRate
@@ -26,7 +26,7 @@ class CurrencyForm(forms.ModelForm):
 
 @admin.register(ConversionRate)
 class CurrencyForm(admin.ModelAdmin):
-    form = CurrencyForm
+    form = ConversionForm
     fields = ['rate', 'currency', ]
     list_display = ["currency", "rate",]
     search_fields = ["currency"]

@@ -8,14 +8,14 @@
     <p class="h2"> Money Transfer Wallet </p>
   </blockquote>
   <figcaption class="blockquote-footer">
-    <p class="h7">Transfer money to different currencies worldwide</p>
+    <p class="h7">Transfer money to and from different currencies worldwide</p>
   </figcaption>
 </figure>
 <br />
 <br />
 <div class="container">
-  <div class="row">
-    <div class="col align-self-centre">
+  <div class="row ">
+    <div class="col align-self-center">
       <p class="text-capitalize h3">Hi {{ user.username }} </p>
       <figure class="figure">
        <img src="{{ MEDIA_URL }}{{ userprofile.picture }}" class="figure-img img-fluid rounded-circle"
@@ -24,11 +24,15 @@
         Available Balance:&nbsp;&nbsp;{{ currency.currency_symbol }}<p></figcaption>
       </figure>
     </div>
-    <div class="col align-self-centre">
-      One of three columns
+    <div class="col align-self-center">
+      <button type="button" class="btn btn-outline-success" data-mdb-ripple-color="dark">
+        Deposit Money
+      </button>
     </div>
-    <div class="col align-self-centre">
-      One of three columns
+    <div class="col align-self-center">
+      <button type="button" class="btn btn-outline-info" data-mdb-ripple-color="dark">
+        Send Money
+      </button>
     </div>
   </div>
 </div>

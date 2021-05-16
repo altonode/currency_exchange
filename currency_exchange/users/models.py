@@ -1,7 +1,5 @@
 import uuid as uuid_lib
 
-from PIL import Image
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
@@ -14,8 +12,7 @@ from currency_exchange.converter.models import Currency
 
 class User(AbstractUser):
     """Default user for Currency Exchange Project."""
-
-    #: First and last name do not cover name patterns around the globe
+    #: Username
     name = models.CharField(_("Name of User"), blank=True, max_length=255)
     first_name = None  # type: ignore
     last_name = None  # type: ignore
