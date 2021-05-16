@@ -100,7 +100,7 @@ class RegisterProfile(FormView):
         form = self.get_form()
         if form.is_valid():
             user_profile = form.save(commit=False)
-            user_profile.user = request.user
+            user_profile.user = request.username
             user_profile.save()
             return self.form_valid(form)
         else:

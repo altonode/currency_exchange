@@ -52,7 +52,7 @@ class UserProfile(models.Model):
 
     # update record
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.username.username)
+        self.slug = slugify(self.uuid)
         super(UserProfile, self).save(*args, **kwargs)
 
     # Return the user's name
