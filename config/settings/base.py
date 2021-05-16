@@ -74,6 +74,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "currency_exchange.users.apps.UsersConfig",
     "currency_exchange.converter.apps.ConverterConfig",
+    "currency_exchange.transfer.apps.TransferConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

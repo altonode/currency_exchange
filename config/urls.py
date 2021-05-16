@@ -8,15 +8,13 @@ from django.views.generic.base import RedirectView
 
 urlpatterns = [
     path("", RedirectView.as_view(url="converter/"), name='home'),
-    path(
-        "about/", TemplateView.as_view(template_name="pages/profile.html"), name="about"
-    ),
     # Django Admin, {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path("users/", include("currency_exchange.users.urls", namespace="users")),
     # Converter URLs
     path("converter/", include("currency_exchange.converter.urls", namespace="converter")),
+    # User account management
     path("accounts/", include("allauth.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

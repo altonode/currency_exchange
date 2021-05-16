@@ -4,7 +4,7 @@
 {% block title %}Update Profile{% endblock %}
 
 {% block content %}
-  <h1>Update Profile Picture and Currency</h2>
+  <h3>Update Profile Picture and Currency</h3>
     <form method="post" action="." enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}

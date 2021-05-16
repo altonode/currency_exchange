@@ -11,6 +11,7 @@ from currency_exchange.users.views import (
 )
 
 app_name = "users"
+
 urlpatterns = [
     path("~redirect/", view=user_redirect_view, name="redirect"),
     path("~update/", view=user_update_view, name="update"),
