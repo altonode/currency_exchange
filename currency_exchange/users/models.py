@@ -33,8 +33,7 @@ class User(AbstractUser):
 class UserProfile(models.Model):
     # Links UserProfile to a User model instance.
     username = models.OneToOneField(settings.AUTH_USER_MODEL,
-                                on_delete=models.CASCADE,
-    )
+                                    on_delete=models.CASCADE,)
 
     # Additional User attributes to include.
     picture = models.ImageField(upload_to='profile_images', blank=True)
