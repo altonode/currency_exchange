@@ -42,6 +42,7 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
 user_update_view = UserUpdateView.as_view()
 
+
 @login_required
 def profile(request, username):
     try:
@@ -49,7 +50,7 @@ def profile(request, username):
     except User.DoesNotExist:
         return redirect('index')
 
-    userprofile = UserProfile.objects.get_or_create(user=user)[0]
+    userprofile = UserProfile.objects.get_or_create(username=user)[0]
     form = UserProfileForm(
         {'picture': userprofile.picture, 'preferred_currency': userprofile.preferred_currency})
 
@@ -62,23 +63,6 @@ def profile(request, username):
             print(form.errors)
     return render(request, 'pages/profile.html',
                   {'userprofile': userprofile, user: 'user', 'username': username, 'form': form})
-
-
-class ProfileUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
-
-    model = UserProfile
-    fields = ["picture", "preferred_currency"]
-    success_message = _("Information successfully updated")
-
-    def get_success_url(self):
-        return reverse('users:profile',
-                       kwargs={'username': self.request.user.username})
-
-    def get_object(self):
-        return self.request.user
-
-
-profile_update_view = ProfileUpdateView.as_view()
 
 
 class UserRedirectView(LoginRequiredMixin, RedirectView):
@@ -119,26 +103,3 @@ class RegisterProfile(FormView):
 
 
 register_profile = RegisterProfile.as_view()
-
-
-@login_required
-def profile(request, username):
-    try:
-        user = User.objects.get(username=username)
-    except User.DoesNotExist:
-        return redirect('index')
-
-    userprofile = UserProfile.objects.get_or_create(username=user)[0]
-    form = UserProfileForm(
-        {'username': userprofile.username, 'picture': userprofile.picture,
-         'preferred_currency': userprofile.preferred_currency})
-
-    if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
-        if form.is_valid():
-            form.save(commit=True)
-            return redirect('users:profile', user.username)
-        else:
-            print(form.errors)
-    return render(request, 'pages/profile.html',
-                  {'userprofile': userprofile, 'user': user, 'form': form,})

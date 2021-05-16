@@ -12,8 +12,10 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path("users/", include("currency_exchange.users.urls", namespace="users")),
-    # Converter URLs
+    # Converter App RLs
     path("converter/", include("currency_exchange.converter.urls", namespace="converter")),
+    # Transfer App URLs
+    path("transfer/", include("currency_exchange.transfer.urls", namespace="transfer")),
     # User account management
     path("accounts/", include("allauth.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

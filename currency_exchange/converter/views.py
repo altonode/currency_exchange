@@ -5,13 +5,13 @@ from .models import Currency
 from .forms import ConverterForm
 from .converter import ConverterMixin
 
+
 class ConverterView(ConverterMixin, TemplateView, FormView):
     template_name = 'pages/home.html'
     form_class = ConverterForm
 
     def get_context_data(self, **kwargs):
-        # Create proxy object for the template context
-        # context = super(ConverterView, self).get_context_data(**kwargs)
+        # Add a list of all currencies to render
         kwargs['currencies'] = Currency.objects.all()
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
