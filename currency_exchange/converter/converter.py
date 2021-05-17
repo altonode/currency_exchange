@@ -1,4 +1,4 @@
-from .models import Currency, ConversionRate
+from currency_exchange.converter.models import Currency, ConversionRate
 
 
 class ConverterMixin(object):
@@ -10,10 +10,10 @@ class ConverterMixin(object):
         sent_amount = form.cleaned_data['amount_from']
 
         sender_currency = Currency.objects.get(currency_name=from_currency)
-        sender_rate_obj = ConversionRate.objects.get(currency=sender_currency)
+        sender_rate_obj = ConversionRate.objects.get(symbol=sender_currency)
 
         receiver_currency = Currency.objects.get(currency_name=to_currency)
-        receiver_rate_obj = ConversionRate.objects.get(currency=receiver_currency)
+        receiver_rate_obj = ConversionRate.objects.get(symbol=receiver_currency)
 
         sender_rate = sender_rate_obj.rate
         sender_symbol = sender_currency.currency_symbol
@@ -23,7 +23,7 @@ class ConverterMixin(object):
         received_amount = sent_amount*receiver_rate/sender_rate
 
         kwargs['sent_amount'] = sent_amount
-        kwargs['received_amount'] = round(received_amount, 2)
+        kwargs['received_amount'] = received_amount
         kwargs['sender_symbol'] = sender_symbol
         kwargs['receiver_symbol'] = receiver_symbol
         response_kwargs.setdefault('content_type', self.content_type)

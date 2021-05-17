@@ -13,27 +13,28 @@
 </figure>
 <br />
 <br />
-<div class="container">
-  <div class="row ">
-    <div class="col align-self-center">
-      <p class="text-capitalize h3">Hi {{ user.username }} </p>
-      <figure class="figure">
-       <img src="{{ MEDIA_URL }}{{ userprofile.picture }}" class="figure-img img-fluid rounded-circle"
+<center>
+  <div class="container">
+    <div class="row ">
+      <div class="col align-self-center">
+        <p class="text-capitalize h3">Hi {{ user.username }} </p>
+        <figure class="figure">
+          <img src="{{ MEDIA_URL }}{{ userprofile.picture }}" class="figure-img img-fluid rounded-circle"
             width="150" alt="{{ userprofile.preferred_currency }}">
-       <figcaption class="figure-caption"><p class="h7">Currency:&nbsp;{{userprofile.preferred_currency}}<br/>
-        Available Balance:&nbsp;&nbsp;{{ currency.currency_symbol }}<p></figcaption>
-      </figure>
-    </div>
-    <div class="col align-self-center">
-      <button type="button" class="btn btn-outline-success" data-mdb-ripple-color="dark">
-        Deposit Money
-      </button>
-    </div>
-    <div class="col align-self-center">
-      <button type="button" class="btn btn-outline-info" data-mdb-ripple-color="dark">
-        Send Money
-      </button>
+          <figcaption class="figure-caption"><p class="h7">Currency:&nbsp;{{userprofile.preferred_currency}}<br/>
+            Available Balance: {{ account.balance }}&nbsp;&nbsp; {{ currency.currency_symbol }}<p></figcaption>
+        </figure>
+      </div>
+      <div class="col align-self-center">
+       <a class="btn btn-outline-success" data-mdb-ripple-color="dark"
+        href="{% url 'transfer:update' request.user.username %}" role="button">Deposit Money</a>
+      </div>
+      <div class="col align-self-center">
+        <button type="button" class="btn btn-outline-info" data-mdb-ripple-color="dark">
+          Send Money
+        </button>
+      </div>
     </div>
   </div>
-</div>
+ </center>
 {% endblock content %}

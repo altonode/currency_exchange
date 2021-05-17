@@ -15,6 +15,7 @@ class Transaction(models.Model):
     created = models.DateTimeField(auto_now=True)
     modified = models.DateTimeField(auto_now_add=True)
     note = models.CharField(max_length=255)
+    is_deposit = models.BooleanField(default=False)
     # transaction unique identifier
     uuid = models.UUIDField(
         db_index=True,
@@ -44,7 +45,7 @@ class SentMoney(models.Model):
     debit = models.DecimalField(default=0, decimal_places=2, max_digits=20)
     credit = models.DecimalField(default=0, decimal_places=2, max_digits=20)
     sent_amount = models.IntegerField(blank=False)
-    transaction_id = models.ForeignKey(Transaction, on_delete=models.CASCADE)
+    transaction_id = models.OneToOneField(Transaction, on_delete=models.CASCADE)
 
     # Return the transfer details
     def __str__(self):
@@ -62,7 +63,7 @@ class ReceivedMoney(models.Model):
     rate = models.DecimalField(decimal_places=9, max_digits=20)
     debit = models.DecimalField(default=0, decimal_places=2, max_digits=20)
     credit = models.DecimalField(default=0, decimal_places=2, max_digits=20)
-    received_amount = models.IntegerField(blank=False)
+    received_amount = models.DecimalField(decimal_places=2, max_digits=20)
     transaction_id = models.ForeignKey(Transaction, on_delete=models.CASCADE)
 
     # Return the transfer details
@@ -74,7 +75,7 @@ class Account(models.Model):
     """ Wallet User Accounts"""
     # Links Account to a User model instance.
     username = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,)
-    balance = models.DecimalField(decimal_places=4, max_digits=20, null=True)
+    balance = models.DecimalField(decimal_places=4, max_digits=20, default=0)
 
     # account unique identifier
     account_number = models.UUIDField(

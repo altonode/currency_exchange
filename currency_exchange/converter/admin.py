@@ -21,12 +21,12 @@ class ConversionForm(forms.ModelForm):
 
     class Meta:
         model = ConversionRate
-        fields = ['rate', 'currency', ]
+        fields = ['rate', 'symbol', ]
 
 
 @admin.register(ConversionRate)
 class CurrencyForm(admin.ModelAdmin):
     form = ConversionForm
-    fields = ['rate', 'currency', ]
-    list_display = ["currency", "rate",]
-    search_fields = ["currency"]
+    fields = ['rate', 'symbol', ]
+    list_display = ["symbol", "rate",]
+    search_fields = ["symbol"]
