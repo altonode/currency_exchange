@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Deposit - Money{% endblock %}
+
+{% block content %}
+  <h2>Hi {{ user.username }}, please enter amount you wish to deposit</h2>
+  <form class="form-horizontal" method="post" action="{% url 'transfer:update' request.user.username %}">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="control-group">
+      <div class="controls">
+        <button type="submit" class="btn btn-primary">Deposit</button>
+      </div>
+    </div>
+  </form>
+
+</div>
+<!-- End Action buttons -->
+{% endblock %}

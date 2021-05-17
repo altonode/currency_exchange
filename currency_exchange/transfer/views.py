@@ -9,9 +9,9 @@ from django.urls import reverse
 
 from currency_exchange.users.models import UserProfile
 from currency_exchange.converter.models import Currency
-from .transfer import TransferMixin
 from . models import Account
 from . forms import AccountUpdateForm
+from .transfer import account_deposit
 
 
 User = get_user_model()
@@ -36,7 +36,7 @@ class WalletView(LoginRequiredMixin, TemplateView):
 wallet_view = WalletView.as_view()
 
 
-class AccountUpdateView(LoginRequiredMixin, SuccessMessageMixin, TransferMixin, TemplateView, FormView):
+class AccountUpdateView(LoginRequiredMixin, SuccessMessageMixin, TemplateView, FormView):
 
     model = Account
     form_class = AccountUpdateForm
@@ -49,7 +49,7 @@ class AccountUpdateView(LoginRequiredMixin, SuccessMessageMixin, TransferMixin, 
         userprofile = UserProfile.objects.get(username=user)
         preferred_currency = userprofile.preferred_currency
         currency = Currency.objects.get(currency_name=preferred_currency)
-        account = Account.objects.get(username=userprofile.username)
+        account = Account.objects.get(username=user)
         kwargs['username'] = username
         kwargs['currency'] = currency
         kwargs['userprofile'] = userprofile
@@ -72,8 +72,7 @@ class AccountUpdateView(LoginRequiredMixin, SuccessMessageMixin, TransferMixin, 
         form = self.get_form()
         if form.is_valid():
             deposit = form.cleaned_data['deposit']
-            print(deposit)
-            print(type(deposit))
+            account_deposit(username, deposit)
             return HttpResponseRedirect('/transfer/~wallet/{}/'.format(username))
         else:
             return self.form_invalid(username, form)

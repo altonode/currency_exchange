@@ -63,7 +63,6 @@ class ReceivedMoney(models.Model):
     rate = models.DecimalField(decimal_places=9, max_digits=20)
     debit = models.DecimalField(default=0, decimal_places=2, max_digits=20)
     credit = models.DecimalField(default=0, decimal_places=2, max_digits=20)
-    received_amount = models.DecimalField(decimal_places=2, max_digits=20)
     transaction_id = models.ForeignKey(Transaction, on_delete=models.CASCADE)
 
     # Return the transfer details
