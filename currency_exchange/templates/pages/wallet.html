@@ -15,7 +15,7 @@
 <br />
 <center>
   <div class="container">
-    <div class="row ">
+    <div class="row">
       <div class="col align-self-center">
         <p class="text-capitalize h3">Hi {{ user.username }} </p>
         <figure class="figure">
@@ -31,7 +31,45 @@
       </div>
       <div class="col align-self-center">
         <a class="btn btn-outline-info" data-mdb-ripple-color="dark"
-        href="{% url 'transfer:transfer' account.account_number %}" role="button">Send Money</a>
+           href="{% url 'transfer:transfer' account.account_number %}" role="button">Send Money</a>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col align-self-center">
+        {% if money_sent %}
+          <p>Money Sent:</p>
+          <ul class="list-group list-group-horizontal">
+            <li class="list-group-item">Date</li>
+            <li class="list-group-item">Amount</li>
+            <li class="list-group-item">Sent To</li>
+          </ul>
+          {% for money in money_sent %}
+            <ul class="list-group list-group-horizontal">
+              <li class="list-group-item">{{ money_sent.date }}</li>
+              <li class="list-group-item">{{ money_sent.transfer_to }}</li>
+              <li class="list-group-item">{{ money_sent.credit }} {{ money_sent.currency }}</li>
+            </ul>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col align-self-center">
+        {% if money_received %}
+          <p>Money Received:</p>
+          <ul class="list-group list-group-horizontal">
+            <li class="list-group-item">Date</li>
+            <li class="list-group-item">Amount</li>
+            <li class="list-group-item">Received From</li>
+            {% for money in money_received %}
+              <li class="list-group-item">{{ money_received.date }}</li>
+              <li class="list-group-item">{{ money_received.transfer_from }}</li>
+              <li class="list-group-item">{{ money_received.debit }} {{ money_received.currency }}o</li>
+            </ul>
+          {% endfor %}
+        {% endif %}
       </div>
     </div>
   </div>

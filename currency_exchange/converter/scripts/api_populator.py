@@ -51,7 +51,7 @@ def run(*args):
 
 def add_rate(symbol, rate):
     print(f'{symbol} conversion rate: {rate}')
-    r = ConversionRate.objects.get_or_create(symbol=symbol, rate=rate)[0]
+    r = ConversionRate.objects.get_or_create(symbol=symbol, defaults={'rate': rate})[0]
     r.save()
     return r
 

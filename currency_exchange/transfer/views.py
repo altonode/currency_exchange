@@ -8,7 +8,7 @@ from django.views.generic import FormView
 
 from currency_exchange.users.models import UserProfile
 from currency_exchange.converter.models import Currency, ConversionRate
-from . models import Account
+from . models import Account, ReceivedMoney, SentMoney
 from . forms import AccountUpdateForm, SentMoneyForm
 from .transfer import account_deposit, money_transfer
 
@@ -31,10 +31,20 @@ class WalletView(LoginRequiredMixin, TemplateView):
         balance = account.balance
         rate = conversion.rate
         amount = balance*rate
+        user_uuid = userprofile.uuid
+        money_sent = SentMoney.objects.filter(sender_uuid=user_uuid)
+        money_received = ReceivedMoney.objects.filter(receiver_uuid=user_uuid)
+        print(len(money_received))
+        for money in money_received:
+            print(money_received.date)
+            print(money_received.transfer_from)
+            print(money_received.debit)
         kwargs['currency'] = currency
         kwargs['userprofile'] = userprofile
         kwargs['account'] = account
         kwargs['amount'] = amount
+        kwargs['money_sent'] = money_sent
+        kwargs['money_received'] = money_received
         return kwargs
 
 
