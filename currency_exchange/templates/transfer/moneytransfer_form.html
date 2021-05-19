@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Send - Money{% endblock %}
+
+{% block content %}
+  <br/>
+  <h4>Hi {{ user.username }}, please select the person to send money to</h4>
+  <form class="form-horizontal" method="post" action="{% url 'transfer:transfer' request.user.username %}">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="control-group">
+      <div class="controls">
+        <button type="submit" class="btn btn-primary">Transfer</button>
+      </div>
+    </div>
+  </form>
+<!-- End Action buttons -->
+{% endblock %}

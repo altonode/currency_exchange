@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 
 from currency_exchange.users.models import UserProfile
 from currency_exchange.converter.models import Currency, ConversionRate
-from . models import Account, ReceivedMoney, Transaction
+from . models import Account, SentMoney, ReceivedMoney, Transaction
 
 
 User = get_user_model()
@@ -15,6 +15,7 @@ def account_deposit(username, deposit):
     sender_rate_obj = ConversionRate.objects.get(symbol=sender_currency)
     sender_rate = sender_rate_obj.rate
     sender_symbol = sender_currency.currency_symbol
+
     # Admin ledger account user for deposits
     sender_profile = UserProfile.objects.get(uuid='88069a9b-1a84-416f-9b4c-6e310f5ec886')
 
@@ -40,8 +41,8 @@ def account_deposit(username, deposit):
     account.balance = balance
     account.save()
 
+    note = 'DEPOSIT: {} {} deposited to {} wallet account'.format(sent_amount, sender_symbol, username)
 
-    note = '{} {} deposited to {} wallet account'.format(sent_amount, sender_symbol, username)
     transaction = Transaction.objects.create(note=note, is_deposit=True)
     print(transaction.note)
     transaction.save()
@@ -52,5 +53,69 @@ def account_deposit(username, deposit):
                                  currency=receiver_currency.currency_name,
                                  rate=receiver_rate,
                                  debit=deposit,
-                                 transaction_id=transaction
-                                 ,)
+                                 transaction_uuid=transaction)
+
+
+def money_transfer(context, receiverprofile):
+    # Sender User Information
+    account_uuid = context['account_uuid']
+    sender_uuid = context['sender_uuid']
+    senderprofile = UserProfile.objects.get(uuid=sender_uuid)
+    # Get the sender currency symbol
+    sender_currency = context['sender_currency']
+    # Get the sender line amount
+    sent_amount = context['sent_amount']
+    sender_rate = context['sender_rate']
+    line_amount = sent_amount/sender_rate
+
+    # Receiver User Information
+    userprofile = receiverprofile
+    preferred_currency = userprofile.preferred_currency
+    receiver_currency = Currency.objects.get(currency_name=preferred_currency)
+    receiver_symbol = ConversionRate.objects.get(symbol=receiver_currency)
+    receiver_rate = receiver_symbol.rate
+    receiver_uuid = userprofile.uuid
+
+    # Sender account balance before transfer
+    sender_account = Account.objects.get(account_number=account_uuid)
+    sender_balance = sender_account.balance
+    sender_account.balance = sender_balance - sent_amount
+    sender_account.save()
+
+    # Receiver account information
+    receiver = User.objects.get(username=receiverprofile)
+    receiver_account = Account.objects.get(username=receiver)
+    receiver_balance = receiver_account.balance
+    account_number = receiver_account.account_number
+
+    # Convert sent amount to receiver currency
+    exchange_rate = sender_rate/receiver_rate
+    # Deposit in base currency
+    receiver_debit = sent_amount * exchange_rate
+    receiver_balance = receiver_balance + sent_amount
+    receiver_account.balance = receiver_balance
+    receiver_account.save()
+
+    note = 'TRANSFER: {} {} sent by {} from account number {} to {} of account number {} at exchange rate {} - {}:{}'\
+        .format(sent_amount, sender_currency, senderprofile, account_uuid, receiverprofile, account_number,
+                exchange_rate, sender_currency, receiver_symbol)
+
+    transaction = Transaction.objects.create(note=note)
+    print(transaction.note)
+    transaction.save()
+
+    SentMoney.objects.create(sender_uuid=sender_uuid,
+                             transfer_to=receiverprofile,
+                             line_amount=line_amount,
+                             currency=sender_currency.currency_name,
+                             rate=sender_rate,
+                             credit=sent_amount,
+                             transaction_uuid=transaction)
+
+    ReceivedMoney.objects.create(receiver_uuid=receiver_uuid,
+                                 transfer_from=senderprofile,
+                                 line_amount=line_amount,
+                                 currency=receiver_currency.currency_name,
+                                 rate=receiver_rate,
+                                 debit=receiver_debit,
+                                 transaction_uuid=transaction)

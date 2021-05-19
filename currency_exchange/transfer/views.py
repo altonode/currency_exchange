@@ -1,23 +1,23 @@
 from django.contrib.auth import get_user_model
-from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import TemplateView
 from django.views.generic import FormView
-from django.urls import reverse
 
 from currency_exchange.users.models import UserProfile
-from currency_exchange.converter.models import Currency
+from currency_exchange.converter.models import Currency, ConversionRate
 from . models import Account
-from . forms import AccountUpdateForm
-from .transfer import account_deposit
+from . forms import AccountUpdateForm, SentMoneyForm
+from .transfer import account_deposit, money_transfer
 
 
 User = get_user_model()
 
 
 class WalletView(LoginRequiredMixin, TemplateView):
+
     template_name = 'pages/wallet.html'
 
     def get_context_data(self, username, **kwargs):
@@ -26,22 +26,84 @@ class WalletView(LoginRequiredMixin, TemplateView):
         userprofile = UserProfile.objects.get(username=user)
         preferred_currency = userprofile.preferred_currency
         currency = Currency.objects.get(currency_name=preferred_currency)
+        conversion = ConversionRate.objects.get(symbol=currency)
         account = Account.objects.get_or_create(username=userprofile.username)[0]
+        balance = account.balance
+        rate = conversion.rate
+        amount = balance*rate
         kwargs['currency'] = currency
         kwargs['userprofile'] = userprofile
         kwargs['account'] = account
+        kwargs['amount'] = amount
         return kwargs
 
 
 wallet_view = WalletView.as_view()
 
 
-class AccountUpdateView(LoginRequiredMixin, SuccessMessageMixin, TemplateView, FormView):
+class MoneyTransferView(LoginRequiredMixin, TemplateView, FormView):
+
+    model = Account
+    form_class = SentMoneyForm
+    template_name = 'transfer/moneytransfer_form.html'
+
+    def get_context_data(self, account_uuid, **kwargs):
+        # Create proxy object for the template context
+        account = Account.objects.get(account_number=account_uuid)
+        user = account.username
+        userprofile = UserProfile.objects.get(username=user)
+        preferred_currency = userprofile.preferred_currency
+        currency = Currency.objects.get(currency_name=preferred_currency)
+        kwargs['username'] = user.username
+        kwargs['currency'] = currency
+        kwargs['userprofile'] = userprofile
+        kwargs['account'] = account
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return kwargs
+
+    def form_invalid(self, account_uuid, form):
+        return self.render_to_response(self.get_context_data(account_uuid, form=form))
+
+    def form_valid(self, account_uuid, form):
+        return self.render_to_response(self.get_context_data(account_uuid, form=form))
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        userprofile = UserProfile.objects.get(username=user)
+        sender_uuid = userprofile.sender_uuid
+        sender_currency = userprofile.preferred_currency
+        currency = Currency.objects.get(currency_name=sender_currency)
+        conversion = ConversionRate.objects.get(symbol=currency.currency_symbol)
+        form = self.get_form()
+        account_uuid = kwargs['account_uuid']
+        account = Account.objects.get(account_number=account_uuid)
+        balance = account.balance
+        if form.is_valid():
+            sent_amount = form.cleaned_data['credit']
+            if sent_amount > balance:
+                raise ValidationError("Insufficient balance")
+            receiverprofile = form.cleaned_data['transfer_to']
+            context={}
+            context['sender_uuid'] = sender_uuid
+            context['sender_currency'] = currency.currency_name
+            context['sender_rate'] = conversion.rate
+            context['sent_amount'] = sent_amount
+            context['account'] = account
+            money_transfer(context, receiverprofile)
+            return HttpResponseRedirect('/transfer/~wallet/{}/'.format(user.username))
+        else:
+            return self.form_invalid(account_uuid, form)
+
+
+money_transfer_view = MoneyTransferView.as_view()
+
+
+class AccountUpdateView(LoginRequiredMixin, TemplateView, FormView):
 
     model = Account
     form_class = AccountUpdateForm
     template_name = 'transfer/accountupdate_form.html'
-    success_message = _("Information successfully updated")
 
     def get_context_data(self, username, **kwargs):
         # Create proxy object for the template context
@@ -57,9 +119,6 @@ class AccountUpdateView(LoginRequiredMixin, SuccessMessageMixin, TemplateView, F
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
         return kwargs
-
-    def get_success_url(self):
-        return reverse('transfer:wallet', kwargs={'username': self.request.user.username})
 
     def form_invalid(self, username, form):
         return self.render_to_response(self.get_context_data(username, form=form))

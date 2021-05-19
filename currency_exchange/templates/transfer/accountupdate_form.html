@@ -4,7 +4,8 @@
 {% block title %}Deposit - Money{% endblock %}
 
 {% block content %}
-  <h2>Hi {{ user.username }}, please enter amount you wish to deposit</h2>
+  <br/>
+  <h4>Hi {{ user.username }}, please enter the amount you wish to deposit</h4>
   <form class="form-horizontal" method="post" action="{% url 'transfer:update' request.user.username %}">
     {% csrf_token %}
     {{ form|crispy }}
@@ -14,7 +15,5 @@
       </div>
     </div>
   </form>
-
-</div>
 <!-- End Action buttons -->
 {% endblock %}
