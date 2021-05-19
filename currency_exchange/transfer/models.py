@@ -14,7 +14,7 @@ class Transaction(models.Model):
     """Transaction data for money transferred"""
     created = models.DateTimeField(auto_now=True)
     modified = models.DateTimeField(auto_now_add=True)
-    note = models.CharField(max_length=255)
+    note = models.CharField(max_length=765)
     # Distinguish between deposit and money transfer
     is_deposit = models.BooleanField(default=False)
     # transaction unique identifier
@@ -34,7 +34,7 @@ class SentMoney(models.Model):
     sender_uuid = models.CharField(blank=False, editable=False, max_length=40)
     transfer_to = models.ForeignKey(UserProfile, blank=False, max_length=255, on_delete=models.CASCADE)
     line_amount = models.DecimalField(decimal_places=9, max_digits=20)
-    currency = models.CharField(max_length=128)
+    currency = models.CharField(max_length=4)
     rate = models.DecimalField(decimal_places=9, max_digits=20)
     debit = models.DecimalField(default=0, decimal_places=2, max_digits=20)
     credit = models.DecimalField(default=0, decimal_places=2, max_digits=20)
@@ -76,4 +76,4 @@ class Account(models.Model):
 
     # Return account balance
     def __str__(self):
-        return self.balance
+        return self.account_number

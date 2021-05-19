@@ -11,12 +11,14 @@ class AccountUpdateForm(forms.Form):
 
 class SentMoneyForm(forms.ModelForm):
     query_set = UserProfile.objects.all()
+    transfer_to = forms.ModelChoiceField(queryset=query_set, empty_label="Person to receive money")
     credit = forms.DecimalField(required=True, decimal_places=9, max_digits=20)
+
 
     class Meta:
 
         model = SentMoney
-        fields = ('credit', )
+        fields = ('transfer_to', 'credit', )
 
 
 

@@ -71,8 +71,9 @@ def money_transfer(context, receiverprofile):
     # Receiver User Information
     userprofile = receiverprofile
     preferred_currency = userprofile.preferred_currency
-    receiver_currency = Currency.objects.get(currency_name=preferred_currency)
-    receiver_symbol = ConversionRate.objects.get(symbol=receiver_currency)
+    received_currency = Currency.objects.get(currency_name=preferred_currency)
+    receiver_currency = received_currency.currency_name
+    receiver_symbol = ConversionRate.objects.get(symbol=received_currency)
     receiver_rate = receiver_symbol.rate
     receiver_uuid = userprofile.uuid
 
@@ -96,7 +97,7 @@ def money_transfer(context, receiverprofile):
     receiver_account.balance = receiver_balance
     receiver_account.save()
 
-    note = 'TRANSFER: {} {} sent by {} from account number {} to {} of account number {} at exchange rate {} - {}:{}'\
+    note = 'TRANSFER: {} {} sent by {} from account number {} to {} of account number {} at exchange rate {}: {}->{}'\
         .format(sent_amount, sender_currency, senderprofile, account_uuid, receiverprofile, account_number,
                 exchange_rate, sender_currency, receiver_symbol)
 
@@ -107,7 +108,7 @@ def money_transfer(context, receiverprofile):
     SentMoney.objects.create(sender_uuid=sender_uuid,
                              transfer_to=receiverprofile,
                              line_amount=line_amount,
-                             currency=sender_currency.currency_name,
+                             currency=sender_currency,
                              rate=sender_rate,
                              credit=sent_amount,
                              transaction_uuid=transaction)
@@ -115,7 +116,7 @@ def money_transfer(context, receiverprofile):
     ReceivedMoney.objects.create(receiver_uuid=receiver_uuid,
                                  transfer_from=senderprofile,
                                  line_amount=line_amount,
-                                 currency=receiver_currency.currency_name,
+                                 currency=receiver_currency,
                                  rate=receiver_rate,
                                  debit=receiver_debit,
                                  transaction_uuid=transaction)

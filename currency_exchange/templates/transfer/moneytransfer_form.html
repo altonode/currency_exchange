@@ -4,16 +4,16 @@
 {% block title %}Send - Money{% endblock %}
 
 {% block content %}
-  <br/>
-  <h4>Hi {{ user.username }}, please select the person to send money to</h4>
-  <form class="form-horizontal" method="post" action="{% url 'transfer:transfer' request.user.username %}">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <div class="control-group">
-      <div class="controls">
-        <button type="submit" class="btn btn-primary">Transfer</button>
-      </div>
+<br/>
+<h4>Hi {{ user.username }}, please select the person and amount to send</h4>
+<form class="form-horizontal" method="post" action="{% url 'transfer:transfer' account.account_number %}">
+  {% csrf_token %}
+  {{ form|crispy }}
+  <div class="control-group">
+    <div class="controls">
+      <button type="submit" class="btn btn-primary">Transfer</button>
     </div>
-  </form>
+  </div>
+</form>
 <!-- End Action buttons -->
 {% endblock %}

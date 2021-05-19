@@ -71,10 +71,10 @@ class MoneyTransferView(LoginRequiredMixin, TemplateView, FormView):
     def post(self, request, *args, **kwargs):
         user = self.request.user
         userprofile = UserProfile.objects.get(username=user)
-        sender_uuid = userprofile.sender_uuid
+        sender_uuid = userprofile.uuid
         sender_currency = userprofile.preferred_currency
         currency = Currency.objects.get(currency_name=sender_currency)
-        conversion = ConversionRate.objects.get(symbol=currency.currency_symbol)
+        conversion = ConversionRate.objects.get(symbol=currency)
         form = self.get_form()
         account_uuid = kwargs['account_uuid']
         account = Account.objects.get(account_number=account_uuid)
@@ -89,7 +89,7 @@ class MoneyTransferView(LoginRequiredMixin, TemplateView, FormView):
             context['sender_currency'] = currency.currency_name
             context['sender_rate'] = conversion.rate
             context['sent_amount'] = sent_amount
-            context['account'] = account
+            context['account_uuid'] = account_uuid
             money_transfer(context, receiverprofile)
             return HttpResponseRedirect('/transfer/~wallet/{}/'.format(user.username))
         else:
