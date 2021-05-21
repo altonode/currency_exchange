@@ -34,11 +34,12 @@ class WalletView(LoginRequiredMixin, TemplateView):
         user_uuid = userprofile.uuid
         money_sent = SentMoney.objects.filter(sender_uuid=user_uuid)
         money_received = ReceivedMoney.objects.filter(receiver_uuid=user_uuid)
-        print(len(money_received))
+        for money in money_sent:
+            print(money.transfer_to)
+            print(money.debit)
         for money in money_received:
-            print(money_received.date)
-            print(money_received.transfer_from)
-            print(money_received.debit)
+            print(money.transfer_from)
+            print(money.debit)
         kwargs['currency'] = currency
         kwargs['userprofile'] = userprofile
         kwargs['account'] = account
@@ -89,6 +90,7 @@ class MoneyTransferView(LoginRequiredMixin, TemplateView, FormView):
         account_uuid = kwargs['account_uuid']
         account = Account.objects.get(account_number=account_uuid)
         balance = account.balance
+        print(balance)
         if form.is_valid():
             sent_amount = form.cleaned_data['credit']
             if sent_amount > balance:

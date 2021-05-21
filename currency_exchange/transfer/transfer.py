@@ -17,7 +17,7 @@ def account_deposit(username, deposit):
     sender_symbol = sender_currency.currency_symbol
 
     # Admin ledger account user for deposits
-    sender_profile = UserProfile.objects.get(uuid='88069a9b-1a84-416f-9b4c-6e310f5ec886')
+    sender_profile = UserProfile.objects.get(uuid='e39d1c8b-3c9f-44e1-a027-e0bc4acea676')
 
     # Receiver User Information
     user = User.objects.get(username=username)

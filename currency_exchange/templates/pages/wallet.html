@@ -37,40 +37,53 @@
   </div>
   <div class="container">
     <div class="row">
-      <div class="col align-self-center">
+      <div class="col align-self-start">
         {% if money_sent %}
-          <p>Money Sent:</p>
-          <ul class="list-group list-group-horizontal">
-            <li class="list-group-item">Date</li>
-            <li class="list-group-item">Amount</li>
-            <li class="list-group-item">Sent To</li>
-          </ul>
-          {% for money in money_sent %}
-            <ul class="list-group list-group-horizontal">
-              <li class="list-group-item">{{ money_sent.date }}</li>
-              <li class="list-group-item">{{ money_sent.transfer_to }}</li>
-              <li class="list-group-item">{{ money_sent.credit }} {{ money_sent.currency }}</li>
-            </ul>
-          {% endfor %}
-        {% endif %}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col align-self-center">
+        <table class="table table-hover">
+          <caption>Money Sent</caption>
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Sent To</th>
+              <th scope="col">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for money in money_sent %}
+            <tr>
+              <th scope="row">{{ money.date }}</th>
+              <td>{{ money.transfer_to }}</td>
+              <td>{{ money.credit }} {{ money.currency }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          {% endif %}
+        </table>
+     </div>
+      <div class="col align-self-start">
         {% if money_received %}
-          <p>Money Received:</p>
-          <ul class="list-group list-group-horizontal">
-            <li class="list-group-item">Date</li>
-            <li class="list-group-item">Amount</li>
-            <li class="list-group-item">Received From</li>
+        <table class="table table-hover">
+          <caption>Money Received</caption>
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Received From</th>
+              <th scope="col">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
             {% for money in money_received %}
-              <li class="list-group-item">{{ money_received.date }}</li>
-              <li class="list-group-item">{{ money_received.transfer_from }}</li>
-              <li class="list-group-item">{{ money_received.debit }} {{ money_received.currency }}o</li>
-            </ul>
-          {% endfor %}
-        {% endif %}
-      </div>
+            <tr>
+              <th scope="row">{{ money.date }}</th>
+              <td>{{ money.transfer_from }}</td>
+              <td>{{ money.credit }} {{ money.currency }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          {% endif %}
+        </table>
+     </div>
+
     </div>
   </div>
  </center>

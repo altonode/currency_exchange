@@ -34,10 +34,10 @@ class SentMoney(models.Model):
     sender_uuid = models.CharField(blank=False, editable=False, max_length=40)
     transfer_to = models.ForeignKey(UserProfile, blank=False, max_length=255, on_delete=models.CASCADE)
     line_amount = models.DecimalField(decimal_places=9, max_digits=20)
-    currency = models.CharField(max_length=4)
+    currency = models.CharField(max_length=128)
     rate = models.DecimalField(decimal_places=9, max_digits=20)
-    debit = models.DecimalField(default=0, decimal_places=2, max_digits=20)
-    credit = models.DecimalField(default=0, decimal_places=2, max_digits=20)
+    debit = models.DecimalField(default=0, decimal_places=9, max_digits=20)
+    credit = models.DecimalField(default=0, decimal_places=9, max_digits=20)
     transaction_uuid = models.OneToOneField(Transaction, on_delete=models.CASCADE)
 
     # Return the transfer details
@@ -50,11 +50,11 @@ class ReceivedMoney(models.Model):
     date = models.DateTimeField(auto_now=True)
     receiver_uuid = models.CharField(blank=False, editable=False, max_length=40)
     transfer_from = models.ForeignKey(UserProfile, blank=False, max_length=255, on_delete=models.CASCADE)
-    line_amount = models.DecimalField(decimal_places=2, max_digits=20)
+    line_amount = models.DecimalField(decimal_places=9, max_digits=20)
     currency = models.CharField(blank=False, max_length=128)
     rate = models.DecimalField(decimal_places=9, max_digits=20)
-    debit = models.DecimalField(default=0, decimal_places=2, max_digits=20)
-    credit = models.DecimalField(default=0, decimal_places=2, max_digits=20)
+    debit = models.DecimalField(default=0, decimal_places=9, max_digits=20)
+    credit = models.DecimalField(default=0, decimal_places=9, max_digits=20)
     transaction_uuid = models.ForeignKey(Transaction, on_delete=models.CASCADE)
 
     # Return the transfer details
