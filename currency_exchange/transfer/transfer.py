@@ -1,7 +1,5 @@
 from django.contrib.auth import get_user_model
 
-
-from currency_exchange.users.models import UserProfile
 from currency_exchange.converter.models import Currency, ConversionRate
 from . models import Account, SentMoney, ReceivedMoney, Transaction
 
@@ -36,9 +34,10 @@ def account_deposit(username, deposit):
     exchange_rate = sender_rate/receiver_rate
     # Deposit in base currency
     sent_amount = deposit * exchange_rate
-    balance = balance + sent_amount
+    balance = balance + deposit
     print(balance)
     account.balance = balance
+    print(balance)
     account.save()
 
     note = 'DEPOSIT: {} {} deposited to {} wallet account'.format(sent_amount, sender_symbol, username)
@@ -60,7 +59,7 @@ def money_transfer(context, receiverprofile):
     # Sender User Information
     account_uuid = context['account_uuid']
     sender_uuid = context['sender_uuid']
-    senderprofile = UserProfile.objects.get(uuid=sender_uuid)
+    senderprofile = User.objects.get(uuid=sender_uuid)
     # Get the sender currency symbol
     sender_currency = context['sender_currency']
     # Get the sender line amount
@@ -80,7 +79,9 @@ def money_transfer(context, receiverprofile):
     # Sender account balance before transfer
     sender_account = Account.objects.get(account_number=account_uuid)
     sender_balance = sender_account.balance
+    print(sender_balance)
     sender_account.balance = sender_balance - sent_amount
+    print(sender_balance)
     sender_account.save()
 
     # Receiver account information

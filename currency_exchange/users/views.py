@@ -9,11 +9,26 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.shortcuts import render, redirect
 
-from currency_exchange.users.models import UserProfile
+from allauth.account.views import SignupView
+
 from currency_exchange.users.forms import UserProfileForm
 
 
 User = get_user_model()
+
+
+class ProfileSignupView(SignupView):
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handle Images in POST requests: instantiate a form instance including the passed
+        POST image variable and then check if it's valid.
+        """
+        form = self.form_class(request.POST, request.FILES)
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -29,7 +44,7 @@ user_detail_view = UserDetailView.as_view()
 class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
     model = User
-    fields = ["username"]
+    fields = ["username", "preferred_currency", "picture", ]
     success_message = _("Information successfully updated")
 
     def get_success_url(self):
@@ -50,19 +65,18 @@ def profile(request, username):
     except User.DoesNotExist:
         return redirect('index')
 
-    userprofile = UserProfile.objects.get_or_create(username=user)[0]
     form = UserProfileForm(
-        {'picture': userprofile.picture, 'preferred_currency': userprofile.preferred_currency})
+        {'username': user.username, 'picture': user.picture, 'preferred_currency': user.preferred_currency})
 
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
+        form = UserProfileForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save(commit=True)
             return redirect('users:profile', user.username)
         else:
             print(form.errors)
     return render(request, 'pages/profile.html',
-                  {'userprofile': userprofile, user: 'user', 'username': username, 'form': form})
+                  {user: 'user', 'username': username, 'form': form})
 
 
 class UserRedirectView(LoginRequiredMixin, RedirectView):

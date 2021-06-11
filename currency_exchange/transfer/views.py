@@ -6,7 +6,6 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import TemplateView
 from django.views.generic import FormView
 
-from currency_exchange.users.models import UserProfile
 from currency_exchange.converter.models import Currency, ConversionRate
 from . models import Account, ReceivedMoney, SentMoney
 from . forms import AccountUpdateForm, SentMoneyForm
@@ -23,15 +22,14 @@ class WalletView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, username, **kwargs):
         # Create proxy object for the template context
         user = User.objects.get(username=username)
-        userprofile = UserProfile.objects.get(username=user)
-        preferred_currency = userprofile.preferred_currency
+        preferred_currency = user.preferred_currency
         currency = Currency.objects.get(currency_name=preferred_currency)
         conversion = ConversionRate.objects.get(symbol=currency)
-        account = Account.objects.get_or_create(username=userprofile.username)[0]
+        account = Account.objects.get_or_create(username=user)[0]
         balance = account.balance
         rate = conversion.rate
         amount = balance*rate
-        user_uuid = userprofile.uuid
+        user_uuid = user.uuid
         money_sent = SentMoney.objects.filter(sender_uuid=user_uuid)
         money_received = ReceivedMoney.objects.filter(receiver_uuid=user_uuid)
         for money in money_sent:
@@ -41,7 +39,6 @@ class WalletView(LoginRequiredMixin, TemplateView):
             print(money.transfer_from)
             print(money.debit)
         kwargs['currency'] = currency
-        kwargs['userprofile'] = userprofile
         kwargs['account'] = account
         kwargs['amount'] = amount
         kwargs['money_sent'] = money_sent

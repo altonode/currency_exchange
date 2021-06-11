@@ -6,13 +6,11 @@
 {% block content %}
 <h1>{{user.username}} Profile</h1>
 <br />
-<br />
 <h2>Profile Picture: </h2>
-<img src="{{ MEDIA_URL }}{{ userprofile.picture }}" width="512"
+<img src="{{ MEDIA_URL }}{{ user.picture }}" width="512"
     height="512" alt="Responsive image" class="img-thumbnail"/>
 <br />
-<br />
-<p><strong>Preferred Currency:</strong> &nbsp; {{ userprofile.preferred_currency }}</p>
+<p><strong>Preferred Currency:</strong> &nbsp; {{ user.preferred_currency }}</p>
 <div>
     {% if user.username == request.user.username %}
       <br/>

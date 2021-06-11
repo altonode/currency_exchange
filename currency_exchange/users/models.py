@@ -16,41 +16,17 @@ class User(AbstractUser):
     name = models.CharField(_("Name of User"), blank=True, max_length=255)
     first_name = None  # type: ignore
     last_name = None  # type: ignore
-
-    def get_absolute_url(self):
-        """Get url for user's detail view.
-
-        Returns:
-            str: URL for user detail.
-
-        """
-        return reverse("users:detail", kwargs={"username": self.username})
-
-
-class UserProfile(models.Model):
-    # Links UserProfile to a User model instance.
-    username = models.OneToOneField(settings.AUTH_USER_MODEL,
-                                    on_delete=models.CASCADE,)
-
-    # Additional User attributes to include.
-    picture = models.ImageField(upload_to='profile_images', blank=True)
-    preferred_currency = models.ForeignKey(Currency, blank=True,
+    picture = models.ImageField(upload_to='user_images', blank=True, null=True)
+    preferred_currency = models.ForeignKey(Currency, blank=True, null=True,
                                            on_delete=models.CASCADE)
-
     # user record url unique identifier
     uuid = models.UUIDField(
         db_index=True,
         default=uuid_lib.uuid4,
         editable=False)
 
-    # user url slug
-    slug = models.SlugField(unique=True, blank=True)
-
-    # update record
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.uuid)
-        super(UserProfile, self).save(*args, **kwargs)
-
-    # Return the user's name
-    def __str__(self):
-        return self.username.username
+    def get_absolute_url(self):
+        """
+        Get url for user's detail view.
+        """
+        return reverse("users:detail", kwargs={"username": self.username})

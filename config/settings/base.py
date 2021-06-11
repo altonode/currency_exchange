@@ -319,6 +319,18 @@ ACCOUNT_ADAPTER = "currency_exchange.users.adapters.AccountAdapter"
 SOCIALACCOUNT_ADAPTER = "currency_exchange.users.adapters.SocialAccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_SIGNUP_REDIRECT_URL = "users:register_profile"
+# https://django-allauth.readthedocs.io/en/latest/configuration.html
+ACCOUNT_FORMS = {
+    "login": "allauth.account.forms.LoginForm",
+    "add_email": "allauth.account.forms.AddEmailForm",
+    "change_password": "allauth.account.forms.ChangePasswordForm",
+    "set_password": "allauth.account.forms.SetPasswordForm",
+    "reset_password": "allauth.account.forms.ResetPasswordForm",
+    "reset_password_from_key": "allauth.account.forms.ResetPasswordKeyForm",
+    "disconnect": "allauth.socialaccount.forms.DisconnectForm",
+    # Use our custom signup form
+    "signup": "currency_exchange.users.forms.UserSignupForm",
+}
 
 # OPEN EXCHANGE RATES
 # ------------------------------------------------------------------------------

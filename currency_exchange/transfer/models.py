@@ -1,14 +1,12 @@
 import uuid as uuid_lib
 
-
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.template.defaultfilters import slugify
 
-
-from currency_exchange.users.models import UserProfile
-
+User = get_user_model()
 
 class Transaction(models.Model):
     """Transaction data for money transferred"""
@@ -32,7 +30,7 @@ class SentMoney(models.Model):
     """ Sender transaction details"""
     date = models.DateTimeField(auto_now=True)
     sender_uuid = models.CharField(blank=False, editable=False, max_length=40)
-    transfer_to = models.ForeignKey(UserProfile, blank=False, max_length=255, on_delete=models.CASCADE)
+    transfer_to = models.ForeignKey(User, blank=False, max_length=255, on_delete=models.CASCADE)
     line_amount = models.DecimalField(decimal_places=9, max_digits=20)
     currency = models.CharField(max_length=128)
     rate = models.DecimalField(decimal_places=9, max_digits=20)
@@ -49,7 +47,7 @@ class ReceivedMoney(models.Model):
     """ Receiver transaction details"""
     date = models.DateTimeField(auto_now=True)
     receiver_uuid = models.CharField(blank=False, editable=False, max_length=40)
-    transfer_from = models.ForeignKey(UserProfile, blank=False, max_length=255, on_delete=models.CASCADE)
+    transfer_from = models.ForeignKey(User, blank=False, max_length=255, on_delete=models.CASCADE)
     line_amount = models.DecimalField(decimal_places=9, max_digits=20)
     currency = models.CharField(blank=False, max_length=128)
     rate = models.DecimalField(decimal_places=9, max_digits=20)
